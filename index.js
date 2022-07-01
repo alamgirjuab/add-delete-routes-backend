@@ -1,4 +1,5 @@
 const express = require('express');
+const router = express.Router();
 const app = express();
 const port = process.env.PORT || 5000;
 const ObjectId = require("mongodb").ObjectId;
@@ -11,6 +12,10 @@ require("dotenv").config();
  -------------*/
 app.use(cors());
 app.use(express.json());
+app.use("/user", router);
+app.use('/', (req, res) => {
+    res.send('Hello Gizy Prints!');
+});
 
 /*------------------------- 
 | Database Configuration |
@@ -37,16 +42,27 @@ async function run() {
     /*----------
      | GET API |
      ---------*/
-    app.get("/addusers", async (req, res) => {
+    router.get("/allusers", async (req, res) => {
         const cursor = routes.find({});
-        const allPhones = await cursor.toArray();
-        res.send(allPhones);
+        const allUsers = await cursor.toArray();
+        res.send(allUsers);
+    });
+
+    /*----------------
+     | DATA POST API |
+     ----------------*/
+    router.post('/addnewuser', async (req, res) => {
+        const data = req.body;
+        console.log('hit the post api', data);
+        const result = await routes.insertOne(data);
+        console.log(result);
+        res.json(result);
     });
 
     /*------------------ 
      | DATA DELETE API |
      ------------------*/
-    app.delete('/addusers/:id', async (req, res) => {
+    router.delete('/deleteuser/:id', async (req, res) => {
         const id = req.params.id;
         const query = { _id: ObjectId(id) };
         const result = await routes.deleteOne(query);
@@ -57,10 +73,6 @@ async function run() {
 
 run().catch(console.dir);
 
-app.get('/', (req, res) => {
-    res.send('Hello Gizy Prints!');
-});
-
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
-}); 
+});
