@@ -37,78 +37,28 @@ async function run() {
     /*----------
      | GET API |
      ---------*/
-    app.get("/products", async (req, res) => {
+    app.get("/addusers", async (req, res) => {
         const cursor = routes.find({});
         const allPhones = await cursor.toArray();
         res.send(allPhones);
     });
 
-    /*---------------------- 
-     | SINGLE DATA GET API |
-     ----------------------*/
-    app.get("/products/:id", async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: ObjectId(id) };
-        const result = await routes.findOne(query);
-        res.send(result);
-    })
-
-    /*----------------
-     | DATA POST API |
-     ----------------*/
-    app.post('/products', async (req, res) => {
-        const data = req.body;
-        console.log('hit the post api', data);
-        const result = await routes.insertOne(data);
-        console.log(result);
-        res.json(result);
-    });
-
     /*------------------ 
      | DATA DELETE API |
      ------------------*/
-    app.delete('/products/:id', async (req, res) => {
+    app.delete('/addusers/:id', async (req, res) => {
         const id = req.params.id;
         const query = { _id: ObjectId(id) };
         const result = await routes.deleteOne(query);
         res.json(result);
 
     })
-
-    /*---------------------------- 
-     | PUT API (DATA UPDATE API) |
-     ----------------------------*/
-
-    app.put('/products/:id', async (req, res) => {
-        const id = req.params.id;
-        console.log('updating user', id);
-        // res.send('update not user')
-        const updateService = req.body;
-        console.log(updateService);
-        const filter = { _id: ObjectId(id) };
-        const options = { upsert: true };
-        const updateDoc = {
-            $set: {
-                brand_name: updateService.brand_name,
-                model: updateService.model,
-                ram: updateService.ram,
-                internal_storage: updateService.internal_storage,
-                screen_size: updateService.screen_size,
-                image: updateService.image,
-                spec: updateService.spec,
-                price: updateService.price
-            },
-        };
-        const result = await routes.updateOne(filter, updateDoc, options);
-        // console.log()
-        res.json(result)
-    })
 }
 
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('Hello Gizy Prints!');
 });
 
 app.listen(port, () => {
